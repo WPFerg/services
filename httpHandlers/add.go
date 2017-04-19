@@ -26,7 +26,12 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(byteData, &message)
 
 	if err != nil {
-		httpUtils.HandleError(&w, 400, "Bad Request", "Error unmarhsalling JSON", err)
+		httpUtils.HandleError(&w, 500, "Internal Server Error", "Error unmarhsalling JSON", err)
+		return
+	}
+
+	if message.Message == "" || message.Sender == "" {
+		httpUtils.HandleError(&w, 400, "Bad Request", "Unmarshalled JSON didn't have required fields", nil)
 		return
 	}
 
@@ -34,14 +39,5 @@ func Add(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Added message:", message)
 
-	jsonID, err := json.Marshal(structs.ID{ID: id})
-
-	if err != nil {
-		httpUtils.HandleError(&w, 500, "Internal Server Error", "Error marshalling response", err)
-		return
-	}
-
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(200)
-	w.Write(jsonID)
+	httpUtils.HandleSuccess(&w, structs.ID{ID: id})
 }

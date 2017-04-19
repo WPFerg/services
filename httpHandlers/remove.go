@@ -2,9 +2,7 @@ package httpHandlers
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
-	"strconv"
 
 	"encoding/json"
 
@@ -31,11 +29,13 @@ func Remove(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if storage.Remove(id.ID) {
-		log.Println("Removed ID:", id.ID)
+	if id.ID == 0 {
+		httpUtils.HandleError(&w, 500, "Bad Request", "ID not provided", nil)
+		return
+	}
 
-		w.WriteHeader(200)
-		w.Write([]byte(strconv.Itoa(id.ID)))
+	if storage.Remove(id.ID) {
+		httpUtils.HandleSuccess(&w, structs.ID{ID: id.ID})
 	} else {
 		httpUtils.HandleError(&w, 400, "Bad Request", "ID not found", nil)
 	}

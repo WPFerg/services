@@ -7,12 +7,13 @@ import (
 
 func HandleError(w *http.ResponseWriter, code int, responseText string, logMessage string, err error) {
 	errorMessage := ""
+	writer := *w
 
 	if err != nil {
 		errorMessage = err.Error()
 	}
 
-	log.Panicln(logMessage, errorMessage)
-	(*w).WriteHeader(code)
-	(*w).Write([]byte(responseText))
+	log.Println(logMessage, errorMessage)
+	writer.WriteHeader(code)
+	writer.Write([]byte(responseText))
 }
