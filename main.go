@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/wpferg/services/http_handlers"
+	"github.com/wpferg/services/httpHandlers"
 	"github.com/wpferg/services/storage"
 	"github.com/wpferg/services/structs"
 )
@@ -32,7 +32,7 @@ func main() {
 
 	log.Println("Attempting to start HTTP Server.")
 
-	http.HandleFunc("/", http_handlers.HandleRequest)
+	http.HandleFunc("/", httpHandlers.HandleRequest)
 
 	var err = http.ListenAndServe(":"+strconv.Itoa(PORT), nil)
 

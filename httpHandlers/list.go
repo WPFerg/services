@@ -1,10 +1,11 @@
-package http_handlers
+package httpHandlers
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/wpferg/services/httpHandlers/httpUtils"
 	"github.com/wpferg/services/storage"
 )
 
@@ -12,10 +13,8 @@ func List(w http.ResponseWriter, r *http.Request) {
 	var data, err = json.Marshal(storage.Get())
 
 	if err != nil {
-		log.Panicln("Error marshalling JSON")
-		log.Panicln(err.Error())
-		w.WriteHeader(500)
-		w.Write([]byte("Internal Server Error"))
+		httpUtils.HandleError(&w, 500, "Internal Server Error", "Error marshalling response", err)
+		return
 	}
 
 	log.Println("Successfully returned data")

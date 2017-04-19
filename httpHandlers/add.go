@@ -1,4 +1,4 @@
-package http_handlers
+package httpHandlers
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 
 	"log"
 
+	"github.com/wpferg/services/httpHandlers/httpUtils"
 	"github.com/wpferg/services/storage"
 	"github.com/wpferg/services/structs"
 )
@@ -16,9 +17,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	byteData, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		log.Panicln("Error reading data from body", err.Error())
-		w.WriteHeader(500)
-		w.Write([]byte("Internal Server Error"))
+		httpUtils.HandleError(&w, 500, "Internal Server Error", "Error reading data from body", err)
 		return
 	}
 
@@ -27,9 +26,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(byteData, &message)
 
 	if err != nil {
-		log.Panicln("Error unmarshalling", err.Error())
-		w.WriteHeader(500)
-		w.Write([]byte("Internal Server Error"))
+		httpUtils.HandleError(&w, 400, "Bad Request", "Error unmarhsalling JSON", err)
 		return
 	}
 
@@ -40,9 +37,8 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	jsonID, err := json.Marshal(structs.ID{ID: id})
 
 	if err != nil {
-		log.Panicln("Error marshalling response", err.Error())
-		w.WriteHeader(500)
-		w.Write([]byte("Internal Server Error"))
+		httpUtils.HandleError(&w, 500, "Internal Server Error", "Error marshalling response", err)
+		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")

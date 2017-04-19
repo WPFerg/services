@@ -1,7 +1,8 @@
-package http_handlers
+package httpHandlers
 
 import "net/http"
 import "log"
+import "github.com/wpferg/services/httpHandlers/httpUtils"
 
 func HandleRequest(w http.ResponseWriter, r *http.Request) {
 	log.Println("Incoming Request:", r.Method)
@@ -16,9 +17,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 		Remove(w, r)
 		break
 	default:
-		log.Panicln("Method not allowed", r.Method)
-		w.WriteHeader(405)
-		w.Write([]byte("Method not allowed"))
+		httpUtils.HandleError(&w, 405, "Method not allowed", "Method not allowed", nil)
 		break
 	}
 }
